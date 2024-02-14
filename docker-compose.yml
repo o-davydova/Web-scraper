@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  worker:
+    restart: unless-stopped
+    build:
+      context: ../../PycharmProjects/Web-scraper
+    volumes:
+      - ./dumps:/dumps
+    command: celery -A tasks.celery_app worker -l info
+    depends_on:
+      - redis
+      - selenium
+    env_file:
+      - .env
+
+  celery_beat:
+    build:
+      context: ../../PycharmProjects/Web-scraper
+    command: celery -A tasks.celery_app beat --loglevel=info
+    depends_on:
+      - redis
+      - worker
+      - selenium
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  selenium:
+    image: selenium/standalone-firefox:latest
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    tty: true
+    stdin_open: true
