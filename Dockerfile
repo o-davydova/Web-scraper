@@ -12,6 +12,6 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY ../../PycharmProjects/Web-scraper /app
+COPY . /app
 
 RUN mkdir /dumps && chmod -R 777 /dumps

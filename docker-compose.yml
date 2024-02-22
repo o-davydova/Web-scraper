@@ -4,7 +4,7 @@ services:
   worker:
     restart: unless-stopped
     build:
-      context: ../../PycharmProjects/Web-scraper
+      context: .
     volumes:
       - ./dumps:/dumps
     command: celery -A tasks.celery_app worker -l info
@@ -16,7 +16,7 @@ services:
 
   celery_beat:
     build:
-      context: ../../PycharmProjects/Web-scraper
+      context: .
     command: celery -A tasks.celery_app beat --loglevel=info
     depends_on:
       - redis
